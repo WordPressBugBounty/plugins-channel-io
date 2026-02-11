@@ -1,14 +1,14 @@
 <?php
 /*
 Plugin Name: Channel.io
-Version: 0.16
+Version: 0.17
 Description: Channel is a conversational CRM solution that helps online businesses to capture potential customers before they leave the websites.
 */
 if (!defined('ABSPATH')) {
   exit;
 }
 
-define( 'CHANNEL_IO_VERSION', '0.16' );
+define( 'CHANNEL_IO_VERSION', '0.17' );
 
 // Add font to font icon to set menu icon
 

@@ -14,10 +14,14 @@ window.chSettings = {
   "customLauncherSelector": channel_io_options.channel_io_custom_launcher_selector,
   "mobileMessengerMode": channel_io_options.channel_io_mobile_messenger_mode === 'on' ? 'iframe' : undefined,
   "zIndex": ch_parseInt(channel_io_options.channel_io_z_index),
+  "scriptProvider": "channel",
+  "scriptPlatform": "wordpress",
+  "scriptVersion": "1.0.0"
 };
+
 if (channel_io_options.login) {
-  chSettings.memberId = channel_io_options.id,
-  chSettings.memberHash = channel_io_options.channel_io_member_hash,
+  chSettings.memberId = channel_io_options.id;
+  chSettings.memberHash = channel_io_options.channel_io_member_hash;
   chSettings.profile = {
     "name": channel_io_options.display_name,
     "email": channel_io_options.user_email,

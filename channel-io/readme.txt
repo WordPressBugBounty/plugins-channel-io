@@ -2,8 +2,8 @@
 Contributors: zoyi
 Tags: ecommerce, e-commerce, chat
 Requires at least: 4.6
-Tested up to: 6.1.1
-Stable tag: 0.16
+Tested up to: 6.7.1
+Stable tag: 0.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,3 +68,6 @@ Designed to capture potential customers before they leave your site and increase
 
 = 0.16 =
 * Apply new sdk functions
+
+= 0.17 =
+* Add script provider and version
