@@ -3,7 +3,7 @@ Contributors: zoyi
 Tags: ecommerce, e-commerce, chat
 Requires at least: 4.6
 Tested up to: 6.7.1
-Stable tag: 0.17
+Stable tag: 0.18
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,3 +71,6 @@ Designed to capture potential customers before they leave your site and increase
 
 = 0.17 =
 * Add script provider and version
+
+= 0.18 =
+* Fix logged-in member info being embedded inline in cached HTML, which could leak one member's identity to other visitors when a full-page cache (LiteSpeed Cache, WP Rocket, etc.) was active. Member info is now fetched from an AJAX profile endpoint at boot time so it is never cached with the page.
