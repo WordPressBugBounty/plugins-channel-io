@@ -2,28 +2,12 @@
 
 if (!defined('WP_UNINSTALL_PLUGIN')) exit;
 
-if (get_option('channel_io_plugin_key') != false) {
-    delete_option('channel_io_plugin_key');
-}
-
-if (get_option('channel_io_hide_default_launcher') != false) {
-    delete_option('channel_io_hide_default_launcher');
-}
-
-if (get_option('channel_io_custom_launcher_selector') != false) {
-    delete_option('channel_io_custom_launcher_selector');
-}
-
-if (get_option('channel_io_member_hash') != false) {
-    delete_option('channel_io_member_hash');
-}
-
-if (get_option('channel_io_z_index') != false) {
-    delete_option('channel_io_z_index');
-}
-
-if (get_option('channel_io_z_index') != false) {
-    delete_option('channel_io_z_index');
-}
+// 플러그인이 저장하는 옵션을 모두 지운다. memberHash secret(channel_io_secret_key)도 포함한다.
+delete_option('channel_io_plugin_key');
+delete_option('channel_io_secret_key');
+delete_option('channel_io_hide_default_launcher');
+delete_option('channel_io_custom_launcher_selector');
+delete_option('channel_io_mobile_messenger_mode');
+delete_option('channel_io_z_index');
 
 ?>

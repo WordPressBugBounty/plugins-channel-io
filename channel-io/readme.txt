@@ -3,7 +3,7 @@ Contributors: zoyi
 Tags: ecommerce, e-commerce, chat
 Requires at least: 4.6
 Tested up to: 6.7.1
-Stable tag: 0.18
+Stable tag: 0.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,3 +74,8 @@ Designed to capture potential customers before they leave your site and increase
 
 = 0.18 =
 * Fix logged-in member info being embedded inline in cached HTML, which could leak one member's identity to other visitors when a full-page cache (LiteSpeed Cache, WP Rocket, etc.) was active. Member info is now fetched from an AJAX profile endpoint at boot time so it is never cached with the page.
+
+= 0.19 =
+* Stop showing the saved secret key on the settings page. Leave the field blank to keep the current key, or check "Delete saved secret key" to delete it.
+* Support defining the secret key as CHANNEL_IO_SECRET_KEY in wp-config.php. When it is defined, the secret key saved in the database is deleted.
+* Delete all plugin options, including the secret key, when the plugin is uninstalled.

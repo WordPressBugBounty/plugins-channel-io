@@ -1,14 +1,14 @@
 <?php
 /*
 Plugin Name: Channel.io
-Version: 0.18
+Version: 0.19
 Description: Channel is a conversational CRM solution that helps online businesses to capture potential customers before they leave the websites.
 */
 if (!defined('ABSPATH')) {
   exit;
 }
 
-define( 'CHANNEL_IO_VERSION', '0.18' );
+define( 'CHANNEL_IO_VERSION', '0.19' );
 
 // Add font to font icon to set menu icon
 
@@ -64,12 +64,32 @@ function channel_io_plugin_settings_page() {
     <tr valign="top">
       <th scope="row">Secret key (optional)</th>
       <td>
+        <?php // 저장된 secret 은 화면에 다시 출력하지 않는다. 빈칸으로 저장하면 기존 값을 유지하고, 삭제는 체크박스로 받는다. ?>
+        <?php if (channel_io_has_secret_key_constant()) { ?>
         <input
-          type="text"
-          name="channel_io_secret_key"
-          placeholder="Enter here"
+          type="password"
+          placeholder="Set in wp-config.php"
           style="min-width: 350px;"
-          value="<?php echo sanitize_text_field(get_option('channel_io_secret_key')); ?>" />
+          disabled />
+        <p class="description">Using CHANNEL_IO_SECRET_KEY defined in wp-config.php.</p>
+        <?php } else { ?>
+        <?php $channel_io_has_saved_secret_key = '' !== channel_io_get_secret_key(); ?>
+        <input
+          type="password"
+          name="channel_io_secret_key"
+          placeholder="<?php echo esc_attr($channel_io_has_saved_secret_key ? 'Saved (leave blank to keep)' : 'Enter here'); ?>"
+          style="min-width: 350px;"
+          autocomplete="new-password"
+          value="" />
+        <?php if ($channel_io_has_saved_secret_key) { ?>
+        <p>
+          <label>
+            <input type="checkbox" name="channel_io_secret_key_delete" value="1" />
+            Delete saved secret key
+          </label>
+        </p>
+        <?php } ?>
+        <?php } ?>
       </td>
     </tr>
 
@@ -145,6 +165,49 @@ function channel_io_register_plugin_settings() {
   register_setting('channel-plugin-settings-group', 'channel_io_z_index');
 }
 
+// memberHash secret 은 wp-config.php 의 CHANNEL_IO_SECRET_KEY 상수를 우선 쓰고, 없으면
+// wp_options(channel_io_secret_key) 값을 쓴다. 상수가 문자열이 아니거나 sanitize_text_field
+// 후 비어 있으면(getenv() 실패로 false 등) 정의되지 않은 것으로 본다.
+function channel_io_has_secret_key_constant() {
+  return defined('CHANNEL_IO_SECRET_KEY')
+    && is_string(CHANNEL_IO_SECRET_KEY)
+    && '' !== sanitize_text_field(CHANNEL_IO_SECRET_KEY);
+}
+
+function channel_io_get_secret_key() {
+  if (channel_io_has_secret_key_constant()) {
+    return sanitize_text_field(CHANNEL_IO_SECRET_KEY);
+  }
+  return sanitize_text_field(get_option('channel_io_secret_key'));
+}
+
+// 설정 저장 시 secret 처리. 삭제 체크박스가 켜져 있으면 옵션을 지운다. 빈 값이면 기존 값을
+// 유지한다. 빈칸으로 저장한 경우와, 상수를 써서 입력란이 비활성화돼 필드가 제출되지 않은
+// 경우(options.php 가 null 로 update_option 을 부른다)가 해당한다. 두 경우 모두 기존 값을
+// 돌려줘 update_option 이 행을 새로 쓰지 않게 한다. options.php 가 권한과 nonce 를 확인한 뒤
+// update_option 을 부르므로 $_POST 를 그대로 읽는다.
+add_filter('pre_update_option_channel_io_secret_key', 'channel_io_filter_secret_key_update', 10, 2);
+
+function channel_io_filter_secret_key_update($value, $old_value) {
+  if (!empty($_POST['channel_io_secret_key_delete'])) {
+    delete_option('channel_io_secret_key');
+    return $old_value;
+  }
+  if ('' === sanitize_text_field((string) $value)) {
+    return $old_value;
+  }
+  return $value;
+}
+
+// 상수를 쓰면 DB 에 남은 secret 을 지운다.
+add_action('admin_init', 'channel_io_delete_secret_key_option_if_constant');
+
+function channel_io_delete_secret_key_option_if_constant() {
+  if (channel_io_has_secret_key_constant() && false !== get_option('channel_io_secret_key')) {
+    delete_option('channel_io_secret_key');
+  }
+}
+
 function channel_io_register_style() {
   wp_register_style('channel_io_dashicons', plugins_url( '/css/channelicons.css', __FILE__));
   wp_enqueue_style('channel_io_dashicons');
@@ -192,7 +255,7 @@ function channel_io_ajax_profile() {
   }
 
   $current_user = wp_get_current_user();
-  $secret_key = sanitize_text_field(get_option('channel_io_secret_key'));
+  $secret_key = channel_io_get_secret_key();
   $member_hash = !empty($secret_key)
     ? hash_hmac('sha256', $current_user->ID, pack('H*', $secret_key))
     : null;
