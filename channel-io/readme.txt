@@ -2,7 +2,7 @@
 Contributors: zoyi
 Tags: ecommerce, e-commerce, chat
 Requires at least: 4.6
-Tested up to: 6.7.1
+Tested up to: 7.1
 Stable tag: 0.19
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
